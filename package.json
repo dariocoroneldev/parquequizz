@@ -1,0 +1,27 @@
+{
+  "name": "trivia-master",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@chakra-ui/core": "^0.8.0",
+    "@emotion/core": "^10.0.27",
+    "@emotion/styled": "^10.0.27",
+    "emotion-theming": "^10.0.27",
+    "firebase": "^9.12.1",
+    "next": "13.0.0",
+    "react": "18.2.0",
+    "react-confetti": "^6.0.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^3.11.0",
+    "swr": "^0.3.8-beta.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "license": "MIT"
+}
