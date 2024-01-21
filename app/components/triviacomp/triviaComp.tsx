@@ -64,7 +64,7 @@ const TrviaComp: React.FC = () => {
 
         // Render the component
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+            <div className="flex flex-col items-center justify-center min-h-screen w-full h-full">
                 {gameOver ? (
                     // If the game is over, show the game over screen
                     <div className="p-4 bg-white rounded shadow-md w-full sm:w-3/4 lg:w-1/2">
@@ -92,36 +92,30 @@ const TrviaComp: React.FC = () => {
                 ) : (
                     // If the game is not over, show the current question and options
                     <div className="p-4 bg-white rounded shadow-md w-full sm:w-3/4 lg:w-1/2">
-                        <h2 className="text-2xl font-bold mb-4">Trvia</h2>
-                        <p className="mb-4">Points: {points}</p>
+                        <div className='flex justify-between w-100%'>
+                            <span className="text-2xl font-bold text-black">Trivia</span>
+                            <span className="text-black">Points: {points}</span>
+                        </div>
                         <ProgressBar completed={currentQuestion} total={questions.length} />
-                        <p className="mb-4">
-                            Time:
-                            <Timer isPaused={isPaused} reset={resetTimer} />
-                        </p>
-                        <h1>{question[currentQuestion].question} </h1>
+                        <h3 className='text-xl text-black'>{question[currentQuestion].question} </h3>
                         {message && <p>{message}</p>}
-                        {question[currentQuestion].options.map((option) => (
-                            <button
-                                key={option}
-                                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                                    answered && option !== selectedOption
-                                        ? "opacity-50 cursor-not-allowed"
-                                        : ""
-                                }`}
-                                onClick={() => handleClick(option)}
-                                disabled={answered} 
-                            >
-                                {option}
-                            </button> 
-                        ))}
-                        <div className="flex justify-between mt-4">
-                            <button
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleReset}
-                            >
-                                Reset Game
-                            </button>
+                        <div className='flex flex-col justify-between'>
+                            {question[currentQuestion].options.map((option) => (
+                                <button
+                                    key={option}
+                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 m rounded my-3 ${
+                                        answered && option !== selectedOption
+                                            ? "opacity-50 cursor-not-allowed"
+                                            : ""
+                                    }`}
+                                    onClick={() => handleClick(option)}
+                                    disabled={answered} 
+                                >
+                                    {option}
+                                </button> 
+                            ))}
+                        </div>
+                        <div className="flex mt-4">
                             <button
                                 className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ${
                                     !answered ? "opacity-50 cursor-not-allowed" : ""

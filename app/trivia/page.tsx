@@ -2,9 +2,9 @@ import TriviaComp from "../components/triviacomp/triviaComp";
 
 const Trivia = () => {
     return(
-        <>
-        <TriviaComp />
-        </>
+        <div className='bg-gray-300 h-70'>
+            <TriviaComp />
+        </div>
     );
 };
 
