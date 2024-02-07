@@ -12,10 +12,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ completed = 0, total }) => { 
     const percentage = Math.round((completed / total) * 100); // Usa Math.round() para redondear el porcentaje
 
     return (
-        <div>
-            <progress value={completed} max={total} />
-            <span>{`${percentage}%`}</span>
-        </div>
+    <>
+    
+    <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-full bg-blue-500" style={{ width: `${percentage}%` }}></div>
+    </div>
+    <span className="ml-2 red-100">{percentage}%</span>
+
+    </>
+    
     );
 };
 

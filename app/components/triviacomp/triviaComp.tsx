@@ -5,7 +5,6 @@ import Timer from './timer';
 import { question } from '../../data/Questions';
 import { Question } from '../../types/interface';
 import ProgressBar from './progresbar';
-
 // Define the TrviaComp component
 const TrviaComp: React.FC = () => {
         // Define state variables
@@ -64,77 +63,77 @@ const TrviaComp: React.FC = () => {
 
         // Render the component
         return (
+            <>
+            {/* Componente contenedor */}
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-                {gameOver ? (
-                    // If the game is over, show the game over screen
-                    <div className="p-4 bg-white rounded shadow-md w-full sm:w-3/4 lg:w-1/2">
-                        <h2 className="text-2xl font-bold mb-4">Game Over</h2>
-                        <p className="mb-4">Total Points: {points}</p>
-                        <ProgressBar
-                            completed={currentQuestion + 1}
-                            total={questions.length}
-                        />
+    {gameOver ? (
+        // Pantalla de fin de juego
+        <div className="p-4 bg-white rounded shadow-md w-full sm:w-3/4 lg:w-1/2 ">
+            <h2 className="text-2xl font-bold mb-4">Game Over</h2>
+            <ProgressBar completed={currentQuestion + 1} total={questions.length} />
 
-                        <h2 className="text-xl font-bold mb-4">Questions and Answers</h2>
-                        {questions.map((q) => (
-                            <div key={q.question}>
-                                <p>Question: {q.question}</p>
-                                <p>Correct Answer: {q.answer}</p>
-                            </div>
-                        ))}
-                        <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={handleReset}
-                        >
-                            Play Again
-                        </button>
-                    </div>
-                ) : (
-                    // If the game is not over, show the current question and options
-                    <div className="p-4 bg-white rounded shadow-md w-full sm:w-3/4 lg:w-1/2">
-                        <h2 className="text-2xl font-bold mb-4">Trvia</h2>
-                        <p className="mb-4">Points: {points}</p>
-                        <ProgressBar completed={currentQuestion} total={questions.length} />
-                        <p className="mb-4">
-                            Time:
-                            <Timer isPaused={isPaused} reset={resetTimer} />
-                        </p>
-                        <h1>{question[currentQuestion].question} </h1>
-                        {message && <p>{message}</p>}
-                        {question[currentQuestion].options.map((option) => (
-                            <button
-                                key={option}
-                                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                                    answered && option !== selectedOption
-                                        ? "opacity-50 cursor-not-allowed"
-                                        : ""
-                                }`}
-                                onClick={() => handleClick(option)}
-                                disabled={answered} 
-                            >
-                                {option}
-                            </button> 
-                        ))}
-                        <div className="flex justify-between mt-4">
-                            <button
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleReset}
-                            >
-                                Reset Game
-                            </button>
-                            <button
-                                className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ${
-                                    !answered ? "opacity-50 cursor-not-allowed" : ""
-                                }`}
-                                onClick={handleNextQuestion}
-                                disabled={!answered} 
-                            >
-                                Next Question
-                            </button>
-                        </div>
-                    </div>
-                )}
+            <h2 className="text-xl font-bold mb-4">Questions and Answers</h2>
+            {questions.map((q, index) => (
+                <div key={index} className="mb-4">
+                    <p className="font-bold">Question:</p>
+                    <p>{q.question}</p>
+                    <p className="font-bold">Correct Answer:</p>
+                    <p>{q.answer}</p>
+                </div>
+            ))}
+            <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleReset}
+            >
+                Play Again
+            </button>
+        </div>
+    ) : (
+        // Pantalla de pregunta actual
+        <div className="p-4 bg-red-100 rounded shadow-md w-full sm:w-3/4 lg:w-1/2">
+            <div className='flex flex-col items-center justify-center h-full'>
+                <h2 className="text-4xl font-bold mb-4 text-[#044bab]">Trivia</h2>
+                <ProgressBar completed={currentQuestion} total={questions.length} />
+                <p className="mb-4">Time: <Timer isPaused={isPaused} reset={resetTimer} /></p>
+                <h1 className="text-xl font-bold mb-4">{question[currentQuestion].question}</h1>
+                {message && <p className="mb-4">{message}</p>}
+                {question[currentQuestion].options.map((option, index) => (
+                    <button
+                        key={index}
+                        className={`mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+                            answered && option !== selectedOption ? "opacity-50 cursor-not-allowed" : ""
+                        }`}
+                        onClick={() => handleClick(option)}
+                        disabled={answered}
+                    >
+                        {option}
+                    </button>
+                ))}
+                <p className="mt-4">Total Points: {points}</p>
             </div>
+            <div className="flex justify-between mt-4">
+                <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleReset}
+                >
+                    Reset Game
+                </button>
+                <button
+                    className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ${
+                        !answered ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    onClick={handleNextQuestion}
+                    disabled={!answered}
+                >
+                    Next Question
+                </button>
+            </div>
+        </div>
+    )}
+</div>
+
+        </>
+        
         );
 };
 
