@@ -24,4 +24,5 @@ model Questions {
   question  String   @db.VarChar(255)
   answer    String
   options   String[]
+  image     String  @default("")
 }

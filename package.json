@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
     "@prisma/client": "^5.9.1",
     "axios": "^1.6.7",
     "express": "^4.18.2",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-icons": "^5.0.1",
     "swr": "^2.2.4",
     "xpress": "^2.4.6"
   },
