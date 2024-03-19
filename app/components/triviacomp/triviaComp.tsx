@@ -1,81 +1,119 @@
-"use client"
-import React, { useState, useEffect } from 'react';
-import Timer from './timer';
-import ProgressBar from '@/app/components/triviacomp/progresbar';
-import axios from 'axios';
-import { Question } from '@/app/types/interface';
+"use client";
+import React, { useState, useEffect } from "react";
+import Timer from "./timer";
+import ProgressBar from "@/app/components/triviacomp/progresbar";
+import axios from "axios";
+import { Question } from "@/app/types/interface";
 import { FcAlarmClock } from "react-icons/fc";
 import { BiCoinStack } from "react-icons/bi";
-import DialogAnswer from "@/app/components/triviacomp/dialog"
-import Image from 'next/image';
-  const TriviaComp = () => {
-    const [questions, setQuestions] = useState<Question[] | null>(null);
-    const [error, setError] = useState<any>(null);
-    const [points, setPoints] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-    const [currentQuestion, setCurrentQuestion] = useState(0);
-    const [message, setMessage] = useState('');
-    const [answered, setAnswered] = useState(false);
-    const [resetTimer, setResetTimer] = useState(0);
-    const [gameOver, setGameOver] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+import DialogAnswer from "@/app/components/triviacomp/dialog";
+import Image from "next/image";
+import { useAppSelector, useAppDispatch } from "./../../../redux/hooks";
+import { updateResult } from "./../../../redux/features/gameResultSlice";
 
-    useEffect(() => {
-      const fetchQuestions = async () => {
-        try {
-          const response = await axios.get('/api/questions');
-          setQuestions(response.data);
-        } catch (error) {
-          setError(error);
-        }
-      };
+const TriviaComp = () => {
+  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [points, setPoints] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [message, setMessage] = useState("");
+  const [answered, setAnswered] = useState(false);
+  const [resetTimer, setResetTimer] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [lastTime, setLastTime] = useState(0);
+  const gameResult = useAppSelector((state) => state.gameResultReducer);
+  const [milliseconds, setMilliseconds] = useState(0)
+  const dispatch = useAppDispatch();
 
-      fetchQuestions();
-    }, []);
-
-    useEffect(() => {
-      if (error) {
-        console.error('Error fetching questions:', error);
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get("/api/questions");
+        setQuestions(response.data);
+      } catch (error) {
+        setError(error);
       }
-    }, [error]);
-
-    const handleReset = () => {
-      setPoints(0);
-      setCurrentQuestion(0);
-      setMessage('');
-      setAnswered(false);
-      setResetTimer(resetTimer + 1);
-      setIsPaused(false);
-      setGameOver(false);
     };
 
-    const handleNextQuestion = () => {
-      if (questions && currentQuestion < questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
+    fetchQuestions();
+  }, []);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get("/api/questions");
+        setQuestions(response.data);
+      } catch (error) {
+        setError(error);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
+  useEffect(() => {
+    if (error) {
+      console.error("Error fetching questions:", error);
+    }
+  }, [error]);
+
+  const handleReset = () => {
+    setPoints(0);
+    setCurrentQuestion(0);
+    setMessage("");
+    setAnswered(false);
+    setResetTimer(resetTimer + 1);
+    setIsPaused(false);
+    setGameOver(false);
+    const payload = {
+      leadId: null, // Reinicia el leadId
+      points: 0, // Reinicia los puntos
+      answers: [], // Reinicia las respuestas
+      questions: [], // Reinicia las preguntas
+      time: 0, // Reinicia los temporizadores
+    };
+    dispatch(updateResult(payload));
+  };
+
+  const handleNextQuestion = () => {
+    if (questions && currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setGameOver(true);
+    }
+    setMessage("");
+    setAnswered(false);
+    setIsPaused(false);
+    
+
+    const payload = {
+      leadId: gameResult.leadId, // Mantén el leadId existente
+      points: points, // Actualiza los puntos
+      answers: [...gameResult.answers, selectedOption],
+      questions: questions, // Mantén las preguntas anteriores
+      // time: milliseconds, // Aqui debe actualizerse el tiempo actual al finalizar cada respuesta dejandoa asi el ultimo tiempo en la ultima pregunta
+    };
+    dispatch(updateResult(payload));
+    console.log(gameResult)
+    console.log(milliseconds)
+  };
+
+  const handleClick = (option: string) => {
+    if (!answered) {
+      if (option === questions![currentQuestion]?.answer) {
+        setPoints(points + 1);
+        setMessage("Correcto");
       } else {
-        setGameOver(true);
+        setMessage("Incorrecto");
       }
-      setMessage('');
-      setAnswered(false);
-      setIsPaused(false);
-    };
-
-    const handleClick = (option: string) => {
-      if (!answered) {
-        if (option === questions![currentQuestion]?.answer) {
-          setPoints(points + 1);
-          setMessage('Correcto');
-        } else {
-          setMessage('Incorrecto');
-        }
-        setAnswered(true);
-        setIsPaused(true);
-      }
-      setSelectedOption(option);
-    };
-
-    console.log(questions?.[currentQuestion]?.image)
-
+      setAnswered(true);
+      setIsPaused(true);
+    }
+    setSelectedOption(option);
+  };
+  console.log(gameResult)
   return (
     // GAME OVER SCREEN
     <div className="flex flex-col items-center justify-center h-full">
@@ -96,6 +134,7 @@ import Image from 'next/image';
                 <p>{question.answer}</p>
               </div>
             ))}
+
           <button
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             onClick={handleReset}
@@ -114,14 +153,13 @@ import Image from 'next/image';
             />
             <h1 className="text-xl text-center text-[#ffff] font-bold mb-4">
               {questions?.[currentQuestion]?.question}
-            
             </h1>
 
             <Image
-              src={'https://i.ibb.co/Qr7s3vN/download.jpg'} // Path to your image
+              src={questions?.[currentQuestion]?.image as string}
               alt="Description of your image"
-              width={200} // Width of the image
-              height={100} // Height of the image
+              width={200}
+              height={100}
             />
             {message && (
               <div>
@@ -145,32 +183,6 @@ import Image from 'next/image';
                   </button>
                 )
               )}
-            <div className="flex justify-between w-full">
-              <div className="mt-4 flex flex-col items-center">
-                <div className="flex items-center">
-                  <p className="mr-2 text-white">Puntos:</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-3xl font-bold text-[#ffff]">
-                    {points}
-                  </span>
-                  <BiCoinStack
-                    className="animate-spin-h"
-                    style={{ fontSize: "1.5em", color: "#ffff" }}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-col items-center">
-                <div className="flex items-center">
-                  <FcAlarmClock className="mr-2 animate-bounce text-3xl" />
-                  <p className="mr-2 text-white">Tiempo:</p>
-                </div>
-                <div>
-                  <Timer isPaused={isPaused} reset={resetTimer} />
-                </div>
-              </div>
-            </div>
           </div>
           <div className="flex justify-between mt-6">
             <button
@@ -191,6 +203,37 @@ import Image from 'next/image';
           </div>
         </div>
       )}
+      <div className="flex justify-between w-full m-5 p-5">
+        <div className="mt-4 flex flex-col items-center">
+          <div className="flex items-center">
+            <p className="mr-2 text-white">Puntos:</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-3xl font-bold text-[#ffff]">{points}</span>
+            <BiCoinStack
+              className="animate-spin-h"
+              style={{ fontSize: "1.5em", color: "#ffff" }}
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-col items-center">
+          <div className="flex items-center">
+            <FcAlarmClock className="mr-2 animate-bounce text-3xl" />
+            <p className="mr-2 text-white">Tiempo:</p>
+          </div>
+          <div>
+            <Timer
+              isPaused={isPaused}
+              reset={resetTimer}
+              lastTime={lastTime}
+              gameOver={gameOver}
+              milliseconds={milliseconds}
+              setMilliseconds={setMilliseconds}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

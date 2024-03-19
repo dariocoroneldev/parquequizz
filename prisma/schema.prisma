@@ -26,3 +26,16 @@ model Questions {
   options   String[]
   image     String  @default("")
 }
+
+
+model Lead{
+  id        Int @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  lastname  String    @db.VarChar(255)
+  email     String    @unique
+  phone     String    @unique
+  location    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+

@@ -1,43 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { updateTime } from "./../../../redux/features/gameResultSlice";
+import { useAppDispatch } from "./../../../redux/hooks";
 
 interface TimerProps {
     isPaused: boolean;
     reset: number; 
+    gameOver: boolean;
+    lastTime: number;
+    milliseconds:number;
+    setMilliseconds: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Timer: React.FC<TimerProps> = ({ isPaused, reset }) => {
-    const [seconds, setSeconds] = useState(0);
-    const [isMounted, setIsMounted] = useState(false);
+const Timer: React.FC<TimerProps> = ({ isPaused, reset, gameOver, lastTime, milliseconds, setMilliseconds }) => {
 
-    const parseSeconds = (number: number) => {
-        const hours = Math.floor(number / 3600);
-        const minutes = Math.floor((number - hours * 3600) / 60);
-        const seconds = number - hours * 3600 - minutes * 60;
+    const parseMilliseconds = (milliseconds: number) => {
+        const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+        const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
         return `${hours}:${minutes}:${seconds}`;
     };
 
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
-        setIsMounted(true);
         const interval = setInterval(() => {
-            if (!isPaused) {
-                setSeconds(seconds => seconds + 1);
+            if (!isPaused && !gameOver) {
+                setMilliseconds(prevMilliseconds => prevMilliseconds + 1000);
             }
         }, 1000);
 
+        // Si el juego está terminado, detener el intervalo para pausar el tiempo
+        if (gameOver) {
+            clearInterval(interval); // Detener el intervalo
+            dispatch(updateTime({ time: parseMilliseconds(milliseconds) })); // Actualizar solo el tiempo en el estado global
+        }
+
         return () => clearInterval(interval);
-    }, [isPaused]);
+    }, [isPaused, gameOver, setMilliseconds, milliseconds, dispatch]);
 
     useEffect(() => {
-        setSeconds(0); // Restablecer los segundos cada vez que cambie el contador de reset
+        if (reset > 0) {
+            setMilliseconds(0);
+        }
     }, [reset]);
-
-    if (!isMounted) {
-        return null;
-    }
 
     return (
         <div className="text-4xl font-bold text-[#b30707]">
-            {parseSeconds(seconds)}
+            { parseMilliseconds(milliseconds)}
         </div>
     );
 };
