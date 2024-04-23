@@ -22,3 +22,8 @@ body {
  
 }
 
+input:hover + label {
+  opacity: 100;
+}
+
+

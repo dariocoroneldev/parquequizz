@@ -1,12 +1,13 @@
 
 'use client'
-
 import axios from "axios";
 import { CreateLeadFormData } from "./validationSchema";
+import { store } from '@/redux/store';
 import { toast } from "react-toastify";
-// import { redirect} from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-// import { useRouter } from 'next/navigation'
+import { updateUserData } from "@/redux/features/gameResultSlice";
+
+
 const API_URL = "/api/leads/";
 
 async function create(data: CreateLeadFormData) {
@@ -19,12 +20,16 @@ async function create(data: CreateLeadFormData) {
 
   try {
     const response = await axios.post(API_URL, data);
+    const { id } = response.data;
+    store.dispatch(updateUserData({ leadId: id }));
+
+    console.log(id)
     toast.success("Registro con exito", {
       autoClose: 2000,
       closeOnClick: true,
       onClose: () => window.location.href = "/trivia"
-    //   onClose: () => redirect("/trivia"),
     });
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
