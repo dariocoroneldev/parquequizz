@@ -15,15 +15,63 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  background-color: blue !important;
+  background-color: #fff;
+  /* Ruta de la imagen */
   height: 100vh;
- 
+  width: 100vw;
+  margin: 0;
 }
 
 input:hover + label {
   opacity: 100;
 }
+.image-container {
+  position: absolute; /* Permite que el contenedor ocupe todo el espacio de la pantalla */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Abarca el ancho completo de la ventana */
+  height: 100vh; /* Abarca el alto completo de la ventana */
+  overflow: hidden; /* Oculta cualquier parte de la imagen que salga del contenedor */
+  z-index: -1; /* Envía el contenedor al fondo */
+}
 
+/* Estilos para la imagen */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Hace que la imagen ocupe el ancho completo del contenedor */
+  height: 100%; /* Hace que la imagen ocupe el alto completo del contenedor */
+  object-fit: contain; /* La imagen cubrirá el área del contenedor, manteniendo su proporción */
+  transform: scale(1.8) translate(20px, 125px); /* Ajusta estos valores para manipular escala y posición */
+  transition: transform 0.3s ease; /* Transición suave para animaciones */
+  pointer-events: none; /* Evita que la imagen interfiera con otros elementos */
+  
+  /* Añadimos la animación de fade-in desde abajo */
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+}
 
+/* Definición de la animación */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: scale(1.8) translate(20px, 145px); /* Ligeramente más abajo */
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.8) translate(20px, 125px); /* Posición final */
+  }
+}
+
+/* Escala o reposicionamiento opcional al pasar el cursor */
+.image-container:hover .background-image {
+  transform: scale(1.5) translate(15px, 25px); /* Ajusta estos valores según lo necesites */
+}

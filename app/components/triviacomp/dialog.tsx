@@ -2,7 +2,9 @@ import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {  CheckCircleIcon } from '@heroicons/react/24/outline'
 import { MdError } from "react-icons/md";
+
 export default function DialogAnswer({ message }:any) {
+
   const [open, setOpen] = useState(true)
 
   const cancelButtonRef = useRef(null)

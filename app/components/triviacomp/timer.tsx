@@ -1,26 +1,20 @@
 import React, { useEffect } from 'react';
-import { updateTime } from "./../../../redux/features/gameResultSlice";
-import { useAppDispatch } from "./../../../redux/hooks";
 
 interface TimerProps {
     isPaused: boolean;
     reset: number; 
     gameOver: boolean;
-    lastTime: number;
-    milliseconds:number;
+    milliseconds: number;
     setMilliseconds: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Timer: React.FC<TimerProps> = ({ isPaused, reset, gameOver, lastTime, milliseconds, setMilliseconds }) => {
+const Timer: React.FC<TimerProps> = ({ isPaused, reset, gameOver, milliseconds, setMilliseconds }) => {
 
     const parseMilliseconds = (milliseconds: number) => {
-        const hours = Math.floor(milliseconds / (1000 * 60 * 60));
-        const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
-        return `${hours}:${minutes}:${seconds}`;
+        const minutes = String(Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+        const seconds = String(Math.floor((milliseconds % (1000 * 60)) / 1000)).padStart(2, '0');
+        return `${minutes}:${seconds}`;
     };
-
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -29,14 +23,12 @@ const Timer: React.FC<TimerProps> = ({ isPaused, reset, gameOver, lastTime, mill
             }
         }, 1000);
 
-        // Si el juego está terminado, detener el intervalo para pausar el tiempo
         if (gameOver) {
-            clearInterval(interval); // Detener el intervalo
-            dispatch(updateTime({ time: parseMilliseconds(milliseconds) })); // Actualizar solo el tiempo en el estado global
+            clearInterval(interval); // Detener el intervalo si el juego ha terminado
         }
 
         return () => clearInterval(interval);
-    }, [isPaused, gameOver, setMilliseconds, milliseconds, dispatch]);
+    }, [isPaused, gameOver, setMilliseconds, milliseconds]);
 
     useEffect(() => {
         if (reset > 0) {
@@ -46,7 +38,7 @@ const Timer: React.FC<TimerProps> = ({ isPaused, reset, gameOver, lastTime, mill
 
     return (
         <div className="text-4xl font-bold text-[#b30707]">
-            { parseMilliseconds(milliseconds)}
+            {parseMilliseconds(milliseconds)}
         </div>
     );
 };

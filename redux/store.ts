@@ -36,7 +36,10 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-  getDefaultMiddleware({ serializableCheck: false }),
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+  devTools: process.env.NODE_ENV !== 'production', // Habilita Redux DevTools solo en desarrollo
 });
 
 export type RootState = ReturnType<typeof store.getState>;

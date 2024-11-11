@@ -9,8 +9,8 @@ import { BiCoinStack } from "react-icons/bi";
 import DialogAnswer from "@/app/components/triviacomp/dialog";
 import Image from "next/image";
 import { useAppSelector, useAppDispatch } from "./../../../redux/hooks";
-import { updateResult } from "./../../../redux/features/gameResultSlice";
-import { useRouter } from 'next/navigation'
+import { updateResult, updateTime } from "./../../../redux/features/gameResultSlice";
+import { useRouter } from 'next/navigation';
 
 const TriviaComp = () => {
   const [questions, setQuestions] = useState<Question[] | null>(null);
@@ -23,9 +23,9 @@ const TriviaComp = () => {
   const [resetTimer, setResetTimer] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [lastTime, setLastTime] = useState(0);
+  const [milliseconds, setMilliseconds] = useState(0);
+  const [quizzId, setQuizzId] = useState(0);
   const gameResult = useAppSelector((state) => state.gameResult);
-  const [milliseconds, setMilliseconds] = useState(0)
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -34,24 +34,11 @@ const TriviaComp = () => {
       try {
         const response = await axios.get("/api/questions");
         setQuestions(response.data);
+        setQuizzId(response.data[0].quizzId);
       } catch (error) {
         setError(error);
       }
     };
-
-    fetchQuestions();
-  }, []);
-
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const response = await axios.get("/api/questions");
-        setQuestions(response.data);
-      } catch (error) {
-        setError(error);
-      }
-    };
-
     fetchQuestions();
   }, []);
 
@@ -61,6 +48,20 @@ const TriviaComp = () => {
     }
   }, [error]);
 
+  const formatTime = (milliseconds: number) => {
+    const minutes = String(Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    const seconds = String(Math.floor((milliseconds % (1000 * 60)) / 1000)).padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  };
+
+  const finishGame = () => {
+    setGameOver(true);
+    const finalTime = formatTime(milliseconds); // Convertir a formato MM:SS
+    dispatch(updateTime({ time: finalTime })); // Actualizar el estado global con el tiempo en formato MM:SS
+     // Redirigir después de la actualización
+    router.push('/game-over');
+  };
+
   const handleReset = () => {
     setPoints(0);
     setCurrentQuestion(0);
@@ -69,12 +70,12 @@ const TriviaComp = () => {
     setResetTimer(resetTimer + 1);
     setIsPaused(false);
     setGameOver(false);
+    setMilliseconds(0); // Reiniciar el tiempo a cero
     const payload = {
-      leadId: null, 
       points: 0, 
       answers: [],
       questions: [],
-      time: 0,
+      time: "00:00",
     };
     dispatch(updateResult(payload));
   };
@@ -83,7 +84,7 @@ const TriviaComp = () => {
     if (questions && currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      setGameOver(true);
+      finishGame(); // Llamada a finalizar el juego si es la última pregunta
     }
     setMessage("");
     setAnswered(false);
@@ -92,8 +93,9 @@ const TriviaComp = () => {
     const payload = {
       leadId: gameResult?.leadId,
       points: points,
-      answers: gameResult && gameResult.answers ? [...gameResult.answers, selectedOption] : [selectedOption], // Verifica si gameResult.answers existe y es un array
+      answers: gameResult && gameResult.answers ? [...gameResult.answers, selectedOption] : [selectedOption],
       questions: questions,
+      quizzId: quizzId
     };
     dispatch(updateResult(payload));
   };
@@ -111,11 +113,6 @@ const TriviaComp = () => {
     }
     setSelectedOption(option);
   };
-
-  if (gameOver) {
-    router.push('/game-over'); 
-    return null; 
-  }
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -199,7 +196,6 @@ const TriviaComp = () => {
             <Timer
               isPaused={isPaused}
               reset={resetTimer}
-              lastTime={lastTime}
               gameOver={gameOver}
               milliseconds={milliseconds}
               setMilliseconds={setMilliseconds}

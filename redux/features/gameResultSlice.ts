@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+
 // Define una interfaz para el estado global
 export interface GameResultState {
   leadId?: string | null;
@@ -8,40 +9,44 @@ export interface GameResultState {
   answers?: Array<string>[] | null; // Tipa tus arrays según corresponda
   questions?: Array<string>[] | null; // Tipa tus arrays según corresponda
   time?: number;
+  quizzId?: number | null;
 }
 
-const initialState : GameResultState = {
+const initialState: GameResultState = {
   leadId: null,
-  name:"",
+  name: "",
   points: 0,
   answers: [],
   questions: [],
-  time:0,
-}
+  time: 0,
+  quizzId: null,
+};
 
 export const gameResultSlice = createSlice({
   name: "gameResult",
   initialState,
-  reducers:{
+  reducers: {
     updateResult: (state, action: PayloadAction<GameResultState | any>) => {
-      const { leadId, points, answers, questions, time } = action.payload;
+      const { leadId, points, answers, questions, time, quizzId } = action.payload;
+
       // Actualiza los valores del estado con los proporcionados en el payload
       state.leadId = leadId !== undefined ? leadId : state.leadId;
       state.points = points !== undefined ? points : state.points;
       state.answers = answers !== undefined ? answers : state.answers;
       state.questions = questions !== undefined ? questions : state.questions;
       state.time = time !== undefined ? time : state.time;
+      state.quizzId = quizzId !== undefined ? quizzId : state.quizzId; // Usamos `quizzId` directamente
     },
     updateTime: (state, action) => {
       const { time } = action.payload;
       state.time = time !== undefined ? time : state.time;
     },
     updateUserData: (state, action) => {
-      const {name, leadId} = action.payload;
+      const { name, leadId } = action.payload;
       state.name = name !== undefined ? name : state.name;
-      state.leadId = leadId !== undefined ? leadId : state.leadId
-    }
-  }
+      state.leadId = leadId !== undefined ? leadId : state.leadId;
+    },
+  },
 });
 
 // Exporta el reducer y las acciones

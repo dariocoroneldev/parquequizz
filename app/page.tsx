@@ -1,38 +1,20 @@
-import Image from 'next/image'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="w-full">
-        <Image
-          src="https://media.istockphoto.com/id/1329251224/es/foto/vista-a%C3%A9rea-de-un-r%C3%ADo-que-fluye-a-trav%C3%A9s-de-una-selva-tropical-templada.jpg?s=1024x1024&w=is&k=20&c=aPo84bEUmOtFl69ZVckcj4eiI08jXbOLVmP6oKYZa5w=" // replace with your header image path
-          alt="Header Image"
-          layout="responsive"
-          width={1920}
-          height={300}
-        />
-      </header>
-
-      <main className="flex flex-col items-center justify-center flex-grow text-center p-8">
-        <h1 className="text-4xl font-bold mb-4">Welcome to the Quiz!</h1>
-        <p className="text-xl mb-8">Test your knowledge and have fun!</p>
-        <Link href="/trivia">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Play
-        </button>
+    <>
+      <div className="image-container">
+        <Image src="/banners/bg.png" alt="Background Image" className="background-image" width={100} height={100} quality={100} />
+      </div>
+      {/* Contenedor del texto y botón */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-[55vh] space-y-4 text-center text-[#044e78] animate-fade-in-up">
+        <h1 className="text-6xl font-bold">PARTICIPA</h1>
+        <p className="text-2xl max-w-xs">por una tirolesa gratis</p>
+        <Link href="/form" className="bg-[#044e78] text-white font-bold py-2 px-4 rounded transition duration-300 hover:bg-[#2774a1]">
+          Participar
         </Link>
-      </main>
-
-      <footer className="w-full">
-        <Image
-          src="https://media.istockphoto.com/id/1329251224/es/foto/vista-a%C3%A9rea-de-un-r%C3%ADo-que-fluye-a-trav%C3%A9s-de-una-selva-tropical-templada.jpg?s=1024x1024&w=is&k=20&c=aPo84bEUmOtFl69ZVckcj4eiI08jXbOLVmP6oKYZa5w=" // replace with your footer image path
-          alt="Footer Image"
-          layout="responsive"
-          width={1920}
-          height={300}
-        />
-      </footer>
-    </div>
+      </div>
+    </>
   )
 }
