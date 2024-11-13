@@ -42,8 +42,10 @@ const TriviaComp = () => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get("/api/questions");
+       if(response.status === 200){
         setQuestions(response.data);
-        setQuizzId(response.data[0].quizzId);
+        setQuizzId(response?.data[0].quizzId);
+       }
       } catch (error) {
         setError(error);
       }
