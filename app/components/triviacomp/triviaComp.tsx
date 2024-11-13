@@ -33,7 +33,7 @@ const TriviaComp = () => {
     setSelectedOption(null);
   }, [currentQuestion]);
 
-  const handleOptionClick = (option:any) => {
+  const handleOptionClick = (option: any) => {
     setSelectedOption(option); // Selecciona la opción actual
     handleClick(option); // Llama a la lógica de respuesta
   };
@@ -42,10 +42,10 @@ const TriviaComp = () => {
     const fetchQuestions = async () => {
       try {
         const response = await axios.get("/api/questions");
-       if(response.status === 200){
-        setQuestions(response.data);
-        setQuizzId(response?.data[0].quizzId);
-       }
+        if (response.status === 200) {
+          setQuestions(response.data);
+          setQuizzId(response?.data[0].quizzId);
+        }
       } catch (error) {
         setError(error);
       }
@@ -189,39 +189,41 @@ const TriviaComp = () => {
               </div>
             )}
             {questions &&
-        questions?.[currentQuestion]?.options.map((option, index) => (
-          <button
-            key={index}
-            className={`flex items-center justify-between w-full p-4 mb-3 font-semibold text-gray-800 rounded-lg shadow-md transition-all ${
-              answered && option !== selectedOption
-                ? 'opacity-50 cursor-not-allowed'
-                : ''
-            } ${
-              selectedOption === option
-                ? answered
-                  ? 'bg-green-100 border-2 border-green-500 text-green-700'
-                  : 'bg-white border border-gray-300'
-                : 'bg-white border border-gray-300'
-            }`}
-            onClick={() => handleOptionClick(option)}
-            disabled={answered}
-          >
-            <span>{option}</span>
-            <span
-              className={`w-6 h-6 flex items-center justify-center rounded-full border transition-all ${
-                selectedOption === option
-                  ? answered
-                    ? 'bg-green-500 border-green-700'
-                    : 'border-gray-300'
-                  : 'border-gray-300'
-              }`}
-            >
-              {selectedOption === option && (
-                <span className="w-3 h-3 bg-white rounded-full"></span>
-              )}
-            </span>
-          </button>
-        ))}
+              questions?.[currentQuestion]?.options.map((option, index) => (
+                <button
+                  key={index}
+                  className={`flex w-full p-4 mb-3 font-semibold text-gray-800 rounded-lg shadow-md transition-all ${answered && option !== selectedOption
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                    } ${selectedOption === option
+                      ? answered
+                        ? 'bg-green-100 border-2 border-green-500 text-green-700'
+                        : 'bg-white border border-gray-300'
+                      : 'bg-white border border-gray-300'
+                    }`}
+                  onClick={() => handleOptionClick(option)}
+                  disabled={answered}
+                  style={{ alignItems: 'stretch' }}
+                >
+                  <span className="flex-grow text-left break-words">
+                    {option}
+                  </span>
+                  <span
+                    className={`flex items-center justify-center w-6 h-6 flex-shrink-0 rounded-full border ml-4 transition-all ${selectedOption === option
+                        ? answered
+                          ? 'bg-green-500 border-green-700'
+                          : 'border-gray-300'
+                        : 'border-gray-300'
+                      }`}
+                  >
+                    {selectedOption === option && (
+                      <span className="w-3 h-3 bg-white rounded-full"></span>
+                    )}
+                  </span>
+                </button>
+
+
+              ))}
 
 
           </div>

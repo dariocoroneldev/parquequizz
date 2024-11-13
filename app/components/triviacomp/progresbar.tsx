@@ -15,7 +15,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ completed = 0, total }) => {
 
     return (
         <>
-        <div className="w-[15   0%] h-4 rounded-full overflow-hidden bg-gray-200" style={{ border: '2px solid #66fc52', borderRadius: '9999px' }}>
+        <div className="w-[150%] h-4 rounded-full overflow-hidden bg-gray-200" style={{ border: '2px solid #66fc52', borderRadius: '9999px' }}>
           <div
             className="h-full rounded-full"
             style={{
