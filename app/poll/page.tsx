@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import StarRating from './startRating';
 import axios from 'axios';
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { useRouter } from 'next/navigation';
 
 type SurveyItem = {
   id: number;
@@ -21,6 +22,7 @@ const SurveyForm = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Record<number, any>>({});
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // Cargar las preguntas desde la base de datos al iniciar el componente
@@ -76,7 +78,7 @@ const SurveyForm = () => {
       };
 
       await axios.post('/api/poll', requestData);
-      alert('¡Respuestas enviadas exitosamente!');
+      router.push('/thankyou-poll');
     } catch (error) {
       console.error('Error al enviar las respuestas:', error);
       alert('Hubo un error al enviar tus respuestas.');
@@ -97,21 +99,21 @@ const SurveyForm = () => {
         );
       case 'multiple-choice':
         return (
-          <div>
+          <div className="flex flex-col">
             {currentQuestion.options?.map((option) => (
               <button
                 key={option}
                 onClick={() => handleResponse(option)}
-                className={`p-2 border rounded-lg m-1 ${
-                  responses[currentQuestion.id] === option
+                className={`p-2 border rounded-lg m-1 ${responses[currentQuestion.id] === option
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-200 text-gray-700'
-                }`}
+                  }`}
               >
                 {option}
               </button>
             ))}
           </div>
+
         );
       case 'text':
         return (
