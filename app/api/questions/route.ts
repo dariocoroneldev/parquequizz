@@ -11,7 +11,12 @@ type Question = {
 export async function GET(request: Request): Promise<NextResponse<Question[]>> {
   try {
     const questions = await prisma.questions.findMany();
-    return NextResponse.json(questions);
+    
+    return NextResponse.json(questions,{
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (error: any) {
     return handleError(error);
   }
