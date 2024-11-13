@@ -41,6 +41,7 @@ model Lead {
   results   Result[]
   answers   Answer[]
   surveyAnswers SurveyAnswer[]
+  Prize     Prize[]
 }
 
 model Result {
@@ -91,4 +92,40 @@ model SurveyAnswer {
   // Timestamps para seguimiento
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+model Prize {
+  id          String   @id @default(uuid()) // ID único para cada premio
+  name        String   // Nombre del premio (ej., "Descuento del 10%", "Producto Gratis")
+  description String?  // Descripción breve del premio
+  code        String   @unique // Código único asignado para canjear el premio
+  qrCode      String?  // URL o datos del código QR generado
+  status      PrizeStatus @default(AVAILABLE) // Estado del premio (Disponible, Asignado, Usado)
+  type        PrizeType // Tipo de premio (ej., DESCUENTO, PRODUCTO, ENTRADA)
+  value       Float?    // Valor monetario o relevancia del premio (opcional)
+  leadId      Int?   // ID del usuario al que se le asignó el premio
+  lead        Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull) // Relación con el modelo User
+  createdAt   DateTime  @default(now()) // Fecha de creación del premio
+  updatedAt   DateTime  @updatedAt // Fecha de última actualización
+  redeemedAt  DateTime? // Fecha en la que se canjeó el premio
+  expiresAt   DateTime? // Fecha de expiración del premio
+
+  @@index([status], name: "status_idx") // Índice para buscar premios por estado
+}
+
+// Enum para los diferentes estados de un premio
+enum PrizeStatus {
+  AVAILABLE
+  ASSIGNED
+  USED
+  EXPIRED
+}
+
+// Enum para los tipos de premios
+enum PrizeType {
+  DISCOUNT
+  PRODUCT
+  TICKET
+  VOUCHER
+  SERVICE
 }

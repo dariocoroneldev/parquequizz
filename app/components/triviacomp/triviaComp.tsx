@@ -4,14 +4,14 @@ import Timer from "./timer";
 import ProgressBar from "@/app/components/triviacomp/progresbar";
 import axios from "axios";
 import { Question } from "@/app/types/interface";
-import { FcAlarmClock } from "react-icons/fc";
-import { BiCoinStack } from "react-icons/bi";
+import Star from '@geist-ui/icons/star'
+import Clock from '@geist-ui/icons/clock'
 import DialogAnswer from "@/app/components/triviacomp/dialog";
 import Image from "next/image";
 import { useAppSelector, useAppDispatch } from "./../../../redux/hooks";
 import { updateResult, updateTime } from "./../../../redux/features/gameResultSlice";
 import { useRouter } from 'next/navigation';
-
+import "./trivia.css"
 const TriviaComp = () => {
   const [questions, setQuestions] = useState<Question[] | null>(null);
   const [error, setError] = useState<any>(null);
@@ -28,6 +28,15 @@ const TriviaComp = () => {
   const gameResult = useAppSelector((state) => state.gameResult);
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  useEffect(() => {
+    setSelectedOption(null);
+  }, [currentQuestion]);
+
+  const handleOptionClick = (option:any) => {
+    setSelectedOption(option); // Selecciona la opción actual
+    handleClick(option); // Llama a la lógica de respuesta
+  };
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -58,7 +67,7 @@ const TriviaComp = () => {
     setGameOver(true);
     const finalTime = formatTime(milliseconds); // Convertir a formato MM:SS
     dispatch(updateTime({ time: finalTime })); // Actualizar el estado global con el tiempo en formato MM:SS
-     // Redirigir después de la actualización
+    // Redirigir después de la actualización
     router.push('/game-over');
   };
 
@@ -72,7 +81,7 @@ const TriviaComp = () => {
     setGameOver(false);
     setMilliseconds(0); // Reiniciar el tiempo a cero
     const payload = {
-      points: 0, 
+      points: 0,
       answers: [],
       questions: [],
       time: "00:00",
@@ -115,81 +124,32 @@ const TriviaComp = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <div className="p-4 bg-[#90b7e1] rounded shadow-md w-full sm:w-3/4 lg:w-1/2">
-          <div className="flex flex-col items-center justify-center">
-            <h2 className="text-4xl font-bold mb-6 text-[#ffff]">Trivia</h2>
-            <ProgressBar
-              completed={currentQuestion}
-              total={questions?.length}
-            />
-            <h1 className="text-xl text-center text-[#ffff] font-bold mb-4">
-              {questions?.[currentQuestion]?.question}
-            </h1>
-            <Image
-              src={questions?.[currentQuestion]?.image as string}
-              alt="Description of your image"
-              width={200}
-              height={100}
-            />
-            {message && (
-              <div>
-                <DialogAnswer message={message} />
-              </div>
-            )}
-            {questions &&
-              questions?.[currentQuestion]?.options.map(
-                (option: any, index: any) => (
-                  <button
-                    key={index}
-                    className={`mt-2 bg-[#006b33] hover:bg-[#1c4f35] text-white font-bold py-2 px-4 rounded  ${
-                      answered && option !== selectedOption
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
-                    onClick={() => handleClick(option)}
-                    disabled={answered}
-                  >
-                    {option}
-                  </button>
-                )
-              )}
-          </div>
-          <div className="flex justify-between mt-6">
-            <button
-              className="bg-[#b30707] hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              onClick={handleReset}
-            >
-              Reiniciar Trivia
-            </button>
-            <button
-              className={`bg-[#006b33] hover:bg-[#1c4f35] text-white font-bold py-2 px-4 rounded ${
-                !answered ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={handleNextQuestion}
-              disabled={!answered}
-            >
-              Siguiente
-            </button>
-          </div>
-        </div>
-      <div className="flex justify-between w-full m-5 p-5">
+    <div>
+
+      <div className="flex justify-between w-full m-1 p-1">
         <div className="mt-4 flex flex-col items-center">
           <div className="flex items-center">
             <p className="mr-2 text-white">Puntos:</p>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-3xl font-bold text-[#ffff]">{points}</span>
-            <BiCoinStack
+            <span className="text-3xl font-bold text-white">{points}</span>
+            <Star
               className="animate-spin-h"
-              style={{ fontSize: "1.5em", color: "#ffff" }}
+              color="yellow"
+              size={30}
+              fill="yellow"
             />
           </div>
         </div>
 
         <div className="mt-4 flex flex-col items-center">
           <div className="flex items-center">
-            <FcAlarmClock className="mr-2 animate-bounce text-3xl" />
+            <Clock
+              color="white"
+              size={30}
+              className="mr-2 animate-bounce text-3xl text-red-500"
+              fill="green"
+            />
             <p className="mr-2 text-white">Tiempo:</p>
           </div>
           <div>
@@ -202,6 +162,80 @@ const TriviaComp = () => {
             />
           </div>
         </div>
+      </div>
+      <div className="flex flex-col items-center justify-center h-full">
+        <div className="p-4 bg-[#ffff] rounded-xl shadow-md w-[100%] sm:w-full lg:w-1/2">
+          <div className="flex flex-col items-center justify-center my-2 mx-[5em]">
+            <ProgressBar
+              completed={currentQuestion}
+              total={questions?.length}
+            />
+            <Image
+              src={questions?.[currentQuestion]?.image as string}
+              alt="Description of your image"
+              width={200}
+              height={100}
+              className="rounded-xl"
+            />
+            <h1 className="text-xl text-center text-[#006b33] font-bold mb-4">
+              {questions?.[currentQuestion]?.question}
+            </h1>
+
+            {message && (
+              <div>
+                <DialogAnswer message={message} />
+              </div>
+            )}
+            {questions &&
+        questions?.[currentQuestion]?.options.map((option, index) => (
+          <button
+            key={index}
+            className={`flex items-center justify-between w-full p-4 mb-3 font-semibold text-gray-800 rounded-lg shadow-md transition-all ${
+              answered && option !== selectedOption
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
+            } ${
+              selectedOption === option
+                ? answered
+                  ? 'bg-green-100 border-2 border-green-500 text-green-700'
+                  : 'bg-white border border-gray-300'
+                : 'bg-white border border-gray-300'
+            }`}
+            onClick={() => handleOptionClick(option)}
+            disabled={answered}
+          >
+            <span>{option}</span>
+            <span
+              className={`w-6 h-6 flex items-center justify-center rounded-full border transition-all ${
+                selectedOption === option
+                  ? answered
+                    ? 'bg-green-500 border-green-700'
+                    : 'border-gray-300'
+                  : 'border-gray-300'
+              }`}
+            >
+              {selectedOption === option && (
+                <span className="w-3 h-3 bg-white rounded-full"></span>
+              )}
+            </span>
+          </button>
+        ))}
+
+
+          </div>
+          <div className="flex align-center justify-center">
+
+            <button
+              className={`bg-[#006b33] hover:bg-[#1c4f35] text-white font-bold py-2 px-4 rounded ${!answered ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              onClick={handleNextQuestion}
+              disabled={!answered}
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

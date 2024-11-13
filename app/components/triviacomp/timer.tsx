@@ -37,7 +37,7 @@ const Timer: React.FC<TimerProps> = ({ isPaused, reset, gameOver, milliseconds, 
     }, [reset]);
 
     return (
-        <div className="text-4xl font-bold text-[#b30707]">
+        <div className="text-4xl font-bold text-white">
             {parseMilliseconds(milliseconds)}
         </div>
     );

@@ -41,7 +41,10 @@ const handleFocus = (inputName: string) => {
   return (
     <>
       <div className="flex items-center justify-center bg-gray-100 py-10 h-screen">
+    
+
         <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-md shadow-lg">
+        <h1 className="text-3xl font-bold text-center">Completa tus datos</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-2">
               <label
@@ -126,7 +129,7 @@ const handleFocus = (inputName: string) => {
                 type="submit"
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#00447f] hover:bg-[#fff]  hover:text-[#00447f] hover:border-[#00447f] focDus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00447f]"
               >
-                Registrar
+                Continuar
               </button>
             </div>
           </form>

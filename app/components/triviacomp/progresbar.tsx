@@ -15,11 +15,19 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ completed = 0, total }) => {
 
     return (
         <>
-            <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500" style={{ width: `${percentage}%` }}></div>
-            </div>
-            <span className="ml-2 text-white font-bold mb-6">{percentage}%</span>
-        </>
+        <div className="w-[15   0%] h-4 rounded-full overflow-hidden bg-gray-200" style={{ border: '2px solid #66fc52', borderRadius: '9999px' }}>
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: `${percentage}%`,
+              background: 'linear-gradient(to right, #66fc52, #29a818)', // Gradiente de color
+              borderRadius: '9999px', // Bordes redondeados para el progress bar interno
+            }}
+          ></div>
+        </div>
+        <span className="ml-2 text-gray-700 font-bold mb-6">{percentage}%</span>
+      </>
+      
     );
 };
 

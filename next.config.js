@@ -5,7 +5,7 @@ const nextConfig = {
         remotePatterns: [
             {
               protocol: 'https',
-              hostname: 'i.ibb.co',
+              hostname: 'encrypted-tbn2.gstatic.com',
               port: '',
               pathname: '/**',
             },
@@ -22,6 +22,7 @@ const nextConfig = {
                 pathname: '/**',
               },
           ],
+        
     },
  
 }

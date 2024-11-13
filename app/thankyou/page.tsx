@@ -17,7 +17,7 @@ const ThankYouPage = () => {
     fireConfetti();
     
     // Opcional: Repetir el efecto cada pocos segundos
-    const interval = setInterval(fireConfetti, 3000); // Dispara cada 3 segundos
+    const interval = setInterval(fireConfetti, 6000); // Dispara cada 3 segundos
 
     // Limpieza para detener el confeti al desmontar el componente
     return () => clearInterval(interval);
